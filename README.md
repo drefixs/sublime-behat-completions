@@ -1,5 +1,7 @@
 # Behat Completions for Sublime Text 2
 
+![Demo](http://jadu.github.io/sublime-behat-completions/images/demo.gif)
+
 ## Installation
 
 ### Mac OS X
