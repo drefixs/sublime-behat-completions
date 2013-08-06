@@ -30,6 +30,6 @@ Now restart Sublime Text
 
 ## Usage
 
-To use the completions simply type Given, When, Then, And or But and hit tab to open the quick panel with a listing of all available steps.
-
-Type in the quick panel to filter the steps. Hit enter to select a step or escape to cancel.
+To use the completions simply type Given, When, Then, And or But and 
+hit tab to open the quick panel with a listing of all available steps. 
+Type in the quick panel to filter the steps and hit enter to select a step.
