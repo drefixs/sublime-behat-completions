@@ -11,7 +11,6 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
         self.settings = {}
         settings = sublime.load_settings('Behat Completions.sublime-settings')
         for setting in ['behat_executable_path', 'behat_config_path']:
-            print(settings.get(setting))
             if settings.get(setting) == None:
                 continue
             self.settings[setting] = settings.get(setting)
