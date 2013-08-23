@@ -1,0 +1,9 @@
+[
+    { "keys": ["tab"], "command": "behat_completions", "context":
+        [
+            { "key": "selector", "operator": "equal", "operand": "feature.behat" },
+            { "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
+            { "key": "preceding_text", "operator": "regex_match", "operand": "^\\s*(Given|When|Then|But|And)$", "match_all": true }
+        ]
+    }
+]
