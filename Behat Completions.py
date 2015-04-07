@@ -2,32 +2,38 @@ import sublime
 import sublime_plugin
 import subprocess
 import re
+import os
+import time
 
 class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         self.view = view
+        self.time_run_behat = 0
+        self.steps = []
 
         # Load settings
         self.settings = {}
         settings = sublime.load_settings('Behat Completions.sublime-settings')
-        for setting in ['behat_executable_path', 'behat_config_path']:
+        for setting in ['behat_executable_path', 'behat_config_path', 'behat_steps_list_file']:      
             if settings.get(setting) == None:
                 continue
             self.settings[setting] = settings.get(setting)
 
     def run(self, edit):
-        args = [self.settings['behat_executable_path'], '-dl', '-c', self.settings['behat_config_path']]
-        output = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
-        self.snippets = sorted([self.create_snippet(step) for step in output.strip().split("\n")])
-
-        steps = []
-        for snippet in self.snippets:
-            snippet = re.sub('\$\{\d+\}', '', snippet)
-            snippet = re.sub('\$\{\d+:([\d|\w]+)\}', '\\1', snippet)
-            steps.append(snippet)
+        if self.time_run_behat+60 < int(time.time()):
+            self.time_run_behat = int(time.time())
+            steps_list_file = open(self.settings['behat_steps_list_file'])
+            output = steps_list_file.read()
+            self.snippets = filter(None,sorted([self.create_snippet(step) for step in output.strip().splitlines()]))
+            self.steps = [] 
+            for snippet in self.snippets:
+    	    
+                #snippet = re.sub('\$\{\d+\}', '', snippet)
+                #snippet = re.sub('\$\{\d+:([\d|\w]+)\}', '\\1', snippet)
+                self.steps.append(snippet)
 
         window = sublime.active_window()
-        window.show_quick_panel(steps, self.on_quick_panel_done)
+        window.show_quick_panel(self.steps, self.on_quick_panel_done)
 
     def on_quick_panel_done(self, picked):
         if picked == -1:
@@ -36,49 +42,18 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
 
     def create_snippet(self, step):
         step = step.strip()
-        res = re.match(r'^(Given|When|Then)\s+\/(.*)\/', step)
+        res = re.search(r'(Given|When|Then)\s+(.*)', step)
+        
         if res:
-            # Trim start/end characters
-            pattern = res.group(2).lstrip('^').rstrip('$')
+            # Trim start/end /
+            pattern = res.group(2).strip('/').lstrip('^').rstrip('$')
 
-            # Reset the snippet parameter index for each step
-            self.snippet_parameter_index = 0
+            # Search for named sub-pattern
+            pattern = re.sub(r'[\'\"]?\(\?P\<(\w+)\>[\'\"]?(\(.*?\))?[\'\"]?.*?\)[\'\"]?', ':\\1', pattern)
 
-            # Remove (?:[^"]|\\")* puncutation matches
-            pattern = re.sub('\(\?:\[\^"\]\|\\\\*"\)\*', '', pattern)
-
-            # Fix (?:|I )
-            pattern = re.sub('\(\?:\|?([\w\s]+)\)', '\\1', pattern)
-
-            # Remove look-behind/aheads
-            pattern = re.sub('\+\?\=', '', pattern)
-            pattern = re.sub('\?:', '', pattern)
-            pattern = re.sub('\?!', '', pattern)
-
-            # Remove any left over groups after removing look-behind/aheads so the named group pattern matches
-            pattern = re.sub('\(([\w\s]+)\)', '\\1', pattern)
-
-            # Named groups that will eventually become snippet parameters, e.g. ${1:test}
-            pattern = re.sub('\(\?P<(\w+)>[^\)]*\)', '{{\\1}}', pattern)
-
-            # Default to the first word option, e.g. "I should (be|stay) on ..."
-            pattern = re.sub('\((\w\s+)\|[\w\s\|]+\)', '\\1', pattern)
-
-            # Remove optional characters, e.g. "I see an? something"
-            pattern = re.sub('\w\?', '', pattern)
-
-            # Remove optional groups
-            pattern = re.sub('\?', '', pattern)
-
-            # Remove nested groups
-            pattern = ''.join(self.unbraced_chunks(pattern))
-
-            # Fix empty parameters so that they become snippet parameters, e.g. I click on ""
-            pattern = re.sub('""', '"{{}}"', pattern)
-
-            # Replace placeholders with numbered snippet parameters
-            pattern = re.sub('\{\{(\w*)\}\}', self.named_group_repl, pattern)
-
+            # Search for named sub-pattern
+            #pattern = re.sub('', ':string:', pattern)
+           
             return pattern
 
         return False
