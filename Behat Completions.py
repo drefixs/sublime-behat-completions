@@ -4,6 +4,10 @@ import subprocess
 import re
 import os
 import time
+from os.path import dirname, realpath
+from xml.sax.saxutils import escape
+
+BC_PLUGIN_PATH = dirname(realpath(__file__))
 
 class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
@@ -27,11 +31,25 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             self.snippets = filter(None,sorted([self.create_snippet(step) for step in output.strip().splitlines()]))
             self.steps = [] 
             for snippet in self.snippets:
-    	    
-                #snippet = re.sub('\$\{\d+\}', '', snippet)
-                #snippet = re.sub('\$\{\d+:([\d|\w]+)\}', '\\1', snippet)
                 self.steps.append(snippet)
+            output = re.sub(r'.*(?:Given|When|Then)\s+(.*)','\\1', output)
+            output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
+            output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
+            output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
+            output = re.sub(r'\/\^?(.*?)\$?\/','\\1', output)
+            output = re.sub(r'\?\P\<(\w+)\>','', output)
+            
+            output = escape(output).strip()
+            output = re.sub(r'(.*)','<dict>\n<key>match</key>\n<string>.*(?:Given|When|Then)\s\\1$</string>\n<key>name</key>\n<string>source.behat</string>\n</dict>',output)
+            
+            behat_tmLanguage_t = open(BC_PLUGIN_PATH+"/Behat.tmLanguage.template")
+            behat_tmLanguage_s = behat_tmLanguage_t.read()
+            behat_tmLanguage_t.close()
 
+            behat_tmLanguage_s = re.sub(r'\<dict\>\%ADDSTEPVALIDATION\%\<\/dict\>',output, behat_tmLanguage_s)
+
+            behat_tmLanguage = open(sublime.packages_path()+"/Behat/Syntaxes/Behat.tmLanguage", 'w')
+            behat_tmLanguage.write(behat_tmLanguage_s)
         window = sublime.active_window()
         window.show_quick_panel(self.steps, self.on_quick_panel_done)
 

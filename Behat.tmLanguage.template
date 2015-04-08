@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>author</key>
+	<string>Chris Brand, Claudio Beatrice</string>
+	<key>fileTypes</key>
+	<array>
+		<string>feature</string>
+	</array>
+	<key>firstLineMatch</key>
+	<string>^Feature:(.+)$</string>
+	<key>foldingStartMarker</key>
+	<string>(Feature\:|Background\:|Scenario Outline\:|Scenario\:|Examples\:)</string>
+	<key>foldingStopMarker</key>
+	<string>^(\r\n|\n)$</string>
+	<key>keyEquivalent</key>
+	<string>^~B</string>
+	<key>link</key>
+	<string>http://www.cainsvault.com, http://silent-voice.org</string>
+	<key>name</key>
+	<string>Behat</string>
+	<key>patterns</key>
+	<array>
+		<dict>%ADDSTEPVALIDATION%</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>invalid.behat</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Feature keywords</string>
+			<key>match</key>
+			<string>^\s+\b(And|Given|Then|When|But)(.*)</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Feature keywords</string>
+			<key>match</key>
+			<string>\s*(Scenario\:|Feature\:|Scenario Outline\:|Background\:|Examples\:)</string>
+			<key>name</key>
+			<string>keyword.behat</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Step keywords</string>
+			<key>match</key>
+			<string>^\s+\b(And|Given|Then|When|But)\b</string>
+			<key>name</key>
+			<string>entity.name.class.behat</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Behat scenario tags</string>
+			<key>match</key>
+			<string>(@[A-Za-z0-9_-]+)</string>
+			<key>name</key>
+			<string>support.class.tag.behat</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>#</string>
+			<key>comment</key>
+			<string>Comment color</string>
+			<key>end</key>
+			<string>\n</string>
+			<key>name</key>
+			<string>comment.line.number-sign.behat</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>"""\n</string>
+			<key>comment</key>
+			<string>Code highlight for PyStringNode</string>
+			<key>end</key>
+			<string>"""\n</string>
+			<key>name</key>
+			<string>comment.node.behat</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Double Quotes</string>
+			<key>match</key>
+			<string>"(?:[^"]|\\")*"</string>
+			<key>name</key>
+			<string>string.double.quote.behat</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>&lt;</string>
+			<key>comment</key>
+			<string>Variables. ex &lt;step&gt;</string>
+			<key>end</key>
+			<string>&gt;</string>
+			<key>name</key>
+			<string>string.interpolated.behat</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\| </string>
+			<key>comment</key>
+			<string>Code highlight for Examples and Table Nodes</string>
+			<key>end</key>
+			<string> \|\n</string>
+			<key>name</key>
+			<string>comment.node.behat</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Highlighting for numbers</string>
+			<key>match</key>
+			<string>\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)\b</string>
+			<key>name</key>
+			<string>constant.numeric.behat</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>feature.behat</string>
+	<key>uuid</key>
+	<string>79f77c72-d2d8-44cc-b89c-5620c67c3885</string>
+</dict>
+</plist>
