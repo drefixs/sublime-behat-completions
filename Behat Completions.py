@@ -24,7 +24,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             self.settings[setting] = settings.get(setting)
 
     def run(self, edit):
-        if self.time_run_behat+60 < int(time.time()):
+        if self.time_run_behat+30 < int(time.time()):
             self.time_run_behat = int(time.time())
             steps_list_file = open(self.settings['behat_steps_list_file'])
             output = steps_list_file.read()
@@ -32,7 +32,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             self.steps = [] 
             for snippet in self.snippets:
                 self.steps.append(snippet)
-            output = re.sub(r'.*(?:Given|When|Then)\s+(.*)','\\1', output)
+            output = re.sub(r'.*(?:Given|When|Then|And)\s+(.*)','\\1', output)
             output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
             output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
             output = re.sub(re.compile('(^[^\/].*?)\:\w+', re.MULTILINE),'\\1"((?:[^"]|\\")*)"', output)
@@ -40,7 +40,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             output = re.sub(r'\?\P\<(\w+)\>','', output)
             
             output = escape(output).strip()
-            output = re.sub(r'(.*)','<dict>\n<key>match</key>\n<string>.*(?:Given|When|Then)\s\\1$</string>\n<key>name</key>\n<string>source.behat</string>\n</dict>',output)
+            output = re.sub(r'(.*)','<dict>\n<key>match</key>\n<string>.*(Given|When|Then|And)\s\\1$</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>',output)
             
             behat_tmLanguage_t = open(BC_PLUGIN_PATH+"/Behat.tmLanguage.template")
             behat_tmLanguage_s = behat_tmLanguage_t.read()
