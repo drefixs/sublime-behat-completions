@@ -1,1 +1,3 @@
 *.py[cod]
+behat.steps.list
+.DS_Store

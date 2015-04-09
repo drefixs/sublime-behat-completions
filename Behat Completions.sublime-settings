@@ -1,5 +1,5 @@
 {
     "behat_executable_path": "behat",
-    "behat_config_path": "behat_sd.yml",
-    "behat_steps_list_file": "/var/www/sb/behat.steps.list"
+    "behat_config_path": "behat_dictionary.yml",
+    "behat_steps_list_file": "behat.steps.list"
 }

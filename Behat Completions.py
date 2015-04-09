@@ -26,7 +26,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         if self.time_run_behat+30 < int(time.time()):
             self.time_run_behat = int(time.time())
-            steps_list_file = open(self.settings['behat_steps_list_file'])
+            steps_list_file = open(sublime.packages_path()+"/Behat Completions/"+ self.settings['behat_steps_list_file'])
             output = steps_list_file.read()
             self.snippets = filter(None,sorted([self.create_snippet(step) for step in output.strip().splitlines()]))
             self.steps = [] 
