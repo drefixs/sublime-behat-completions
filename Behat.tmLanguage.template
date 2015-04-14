@@ -22,6 +22,14 @@
 	<string>Behat</string>
 	<key>patterns</key>
 	<array>
+		<dict>
+			<key>comment</key>
+			<string>Feature keywords</string>
+			<key>match</key>
+			<string>\s*(Scenario\:|Feature\:|Scenario Outline\:|Background\:|Examples\:)</string>
+			<key>name</key>
+			<string>keyword.behat</string>
+		</dict>
 		<dict>%ADDSTEPVALIDATION%</dict>
 		<dict>
 			<key>captures</key>
@@ -33,25 +41,9 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>Feature keywords</string>
-			<key>match</key>
-			<string>^\s*(And|Given|Then|When|But)(.*)</string>
-		</dict>
-		<dict>
-			<key>comment</key>
-			<string>Feature keywords</string>
-			<key>match</key>
-			<string>\s*(Scenario\:|Feature\:|Scenario Outline\:|Background\:|Examples\:)</string>
-			<key>name</key>
-			<string>keyword.behat</string>
-		</dict>
-		<dict>
-			<key>comment</key>
 			<string>Step keywords</string>
 			<key>match</key>
-			<string>^\s+\b(And|Given|Then|When|But)\b</string>
-			<key>name</key>
-			<string>entity.name.class.behat</string>
+			<string>^\s*(And|Given|Then|When|But)</string>
 		</dict>
 		<dict>
 			<key>comment</key>
