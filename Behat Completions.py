@@ -40,7 +40,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             output = re.sub(r'\?\P\<(\w+)\>','', output)
             
             output = escape(output).strip()
-            output = re.sub(r'(.*)','<dict>\n<key>match</key>\n<string>.*(Given|When|Then|And)\s\\1$</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>',output)
+            output = re.sub(r'(.*)','<dict>\n<key>match</key>\n<string>^\s*(Given|When|Then|And)\s\\1$</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>',output)
             
             behat_tmLanguage_t = open(BC_PLUGIN_PATH+"/Behat.tmLanguage.template")
             behat_tmLanguage_s = behat_tmLanguage_t.read()

@@ -35,7 +35,7 @@
 			<key>comment</key>
 			<string>Feature keywords</string>
 			<key>match</key>
-			<string>^\s+\b(And|Given|Then|When|But)(.*)</string>
+			<string>^\s*(And|Given|Then|When|But)(.*)</string>
 		</dict>
 		<dict>
 			<key>comment</key>
