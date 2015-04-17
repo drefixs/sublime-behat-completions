@@ -22,12 +22,19 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             if settings.get(setting) == None:
                 continue
             self.settings[setting] = settings.get(setting)
+        self.update()
+
 
     def run(self, edit):
+        self.update()
+        window = sublime.active_window()
+        window.show_quick_panel(self.steps, self.on_quick_panel_done)
+        
+    def update(self):
         if self.time_run_behat+30 < int(time.time()):
             self.time_run_behat = int(time.time())
             steps_list_file = open(sublime.packages_path()+"/Behat Completions/"+ self.settings['behat_steps_list_file'])
-            output = steps_list_file.read()
+            output = steps_list_file.read().decode('ascii', 'ignore').encode('utf8', 'ignore')
             self.snippets = filter(None,sorted([self.create_snippet(step) for step in output.strip().splitlines()]))
             self.steps = [] 
             for snippet in self.snippets:
@@ -49,9 +56,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             behat_tmLanguage_s = re.sub(r'\<dict\>\%ADDSTEPVALIDATION\%\<\/dict\>',output, behat_tmLanguage_s)
 
             behat_tmLanguage = open(sublime.packages_path()+"/Behat/Syntaxes/Behat.tmLanguage", 'w')
-            behat_tmLanguage.write(behat_tmLanguage_s)
-        window = sublime.active_window()
-        window.show_quick_panel(self.steps, self.on_quick_panel_done)
+            behat_tmLanguage.write(behat_tmLanguage_s.decode('ascii', 'ignore').encode('utf8', 'ignore'))   
 
     def on_quick_panel_done(self, picked):
         if picked == -1:
@@ -63,7 +68,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
         res = re.search(r'(Given|When|Then|And|But)\s+(.*)', step)
         
         if res:
-            # Trim start/end /
+            # Trim start/end /  
             pattern = res.group(2).strip('/').lstrip('^').rstrip('$')
 
             # Search for named sub-pattern
