@@ -14,7 +14,7 @@ BC_PLUGIN_PATH = dirname(realpath(__file__))
 class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         self.save_file = sublime.packages_path()+"/Behat Completions/"+"save.p"
-        if  os.path.isfile(self.save_file):
+        if not os.path.isfile(self.save_file):
             self.save = {'time_run_behat':0,'step_file_sha1':'','steps':{}}
         else:
             self.save = pickle.load( open(self.save_file , "rb" ) )
