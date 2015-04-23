@@ -14,7 +14,7 @@ BC_PLUGIN_PATH = dirname(realpath(__file__))
 class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         self.save_file = sublime.packages_path()+"/Behat Completions/"+"save.p"
-        if not os.path.isfile(self.save_file):
+        if  os.path.isfile(self.save_file):
             self.save = {'time_run_behat':0,'step_file_sha1':'','steps':{}}
         else:
             self.save = pickle.load( open(self.save_file , "rb" ) )
@@ -47,27 +47,26 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             steps_items = re.findall('([\s\S]+?(?:\n\n|$))', output)
             self.save['steps'] = {}
             syntax_out = ""
-            re_p_name_delete = re.compile(r'[\'\"]?\(\?P\<(\w+?)\>[\'\"]?(\(.*?\))?[\'\"]?.*?\)[\'\"]?')
             re_step_valid = re.compile(r'(?:Given|When|Then|And|But)([\s\S]+?)\n[\s\S]*?ID\:\s{0,4}([\w._-]+)')
-            re_rep_var_iside = re.compile(r'(^[^\/].*?)\:\w+')
-            re_remove_start_end =  re.compile(r'\/\^?(.*?)\$?\/')
+            re_if_regex_step =  re.compile(r'^\/\^?(.*?)\$?\/$')
+            re_p_name_delete = re.compile(r'[\'\"]?\(\?P\<(\w+?)\>[\'\"]?(\(.*?\))?[\'\"]?.*?\)[\'\"]?')   
+            re_rep_var_iside = re.compile(r'\:\w+')
             re_remove_p_name =  re.compile(r'\?\P\<(\w+)\>')
             for step_item in steps_items:
                 step_res = re.search(re_step_valid, step_item)
                 if step_res and step_res.group(2) not in self.save['steps']:
-                    step_str = step_res.group(1).strip(' \t\n\r').strip('/').lstrip('^').rstrip('$')
-
-                    step_str = re.sub(re_p_name_delete, ':\\1', step_str)
+                    step_str = step_res.group(1).strip(' \t\n\r')
+                    step_res_regex = re.search(re_if_regex_step, step_str)
+                    if step_res_regex:
+                        step_str_regex = step_res_regex.group(1)
+                        step_str_regex = step_str = re.sub(re_remove_p_name,'', step_str_regex)
+                    else:
+                        step_str_regex = re.sub(re_rep_var_iside,'"((?:[^"]|\\")*)"', step_str)
+                        step_str_regex = re.sub(re_p_name_delete, ':\\1', step_str_regex)
+                    
                     self.save['steps'][step_res.group(2)] = step_str
-                    while True: 
-                        step_str_new = re.sub(re_remove_p_name,'\\1"((?:[^"]|\\")*)"', step_str)
-                        if step_str_new != step_str :
-                            step_str = step_str_new
-                        else:
-                            break    
-                    step_str = re.sub(re_remove_start_end,'\\1', step_str)
-                    step_str = re.sub(re_remove_p_name,'', step_str)
-                    syntax_out =syntax_out + '<dict>\n<key>match</key>\n<string>^\s*(Given|When|Then|And|But)(?=\s' + step_str + '$)</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>'+"\n";
+                    
+                    syntax_out = syntax_out + '<dict>\n<key>match</key>\n<string>^\s*(Given|When|Then|And|But)(?=\s' + step_str_regex + '$)</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>'+"\n";
 
 
             output = syntax_out

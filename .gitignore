@@ -1,3 +1,5 @@
-*.py[cod]
+\*.py[cod]
 behat.steps.list
 .DS_Store
+save.p
+.idea
