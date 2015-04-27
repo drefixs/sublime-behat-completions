@@ -3,3 +3,4 @@ behat.steps.list
 .DS_Store
 save.p
 .idea
+Behat Completions.pyc

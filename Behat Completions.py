@@ -40,7 +40,7 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
     def update(self):
         if self.save['time_run_behat']+30 < int(time.time()):
             self.save['time_run_behat'] = int(time.time())
-            steps_list_file = open(sublime.packages_path()+"/Behat Completions/"+ self.settings['behat_steps_list_file']) 
+            steps_list_file = open(sublime.packages_path()+"/Behat Completions/"+ self.settings['behat_steps_list_file'], "rb")
             output = steps_list_file.read().decode('ascii', 'ignore').encode('utf8', 'ignore')
             if self.file_change(output):
                 return True
@@ -55,18 +55,18 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             for step_item in steps_items:
                 step_res = re.search(re_step_valid, step_item)
                 if step_res and step_res.group(2) not in self.save['steps']:
-                    step_str = step_res.group(1).strip(' \t\n\r')
+                    step_str = step_res.group(1).strip(r' \t\n\r')
                     step_res_regex = re.search(re_if_regex_step, step_str)
                     if step_res_regex:
                         step_str_regex = step_res_regex.group(1)
                         step_str_regex = step_str = re.sub(re_remove_p_name,'', step_str_regex)
                     else:
-                        step_str_regex = re.sub(re_rep_var_iside,'"((?:[^"]|\\")*)"', step_str)
-                        step_str_regex = re.sub(re_p_name_delete, ':\\1', step_str_regex)
+                        step_str_regex = re.sub(re_rep_var_iside,r'"((?:[^"]|\\\\")*)"', step_str)
+                        step_str_regex = re.sub(re_p_name_delete, r':\1', step_str_regex)
                     
                     self.save['steps'][step_res.group(2)] = step_str
                     
-                    syntax_out = syntax_out + '<dict>\n<key>match</key>\n<string>^\s*(Given|When|Then|And|But)(?=\s' + escape(step_str_regex) + '$)</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>'+"\n";
+                    syntax_out = syntax_out + r'<dict>\n<key>match</key>\n<string>^\s*(Given|When|Then|And|But)(?=\s' + escape(step_str_regex) + r'$)</string>\n<key>captures</key>\n<dict>\n<key>1</key>\n<dict>\n<key>name</key>\n<string>entity.name.class.behat</string></dict></dict></dict>'+"\n";
 
 
             output = syntax_out
@@ -74,9 +74,9 @@ class BehatCompletionsCommand(sublime_plugin.TextCommand):
             behat_tmLanguage_s = behat_tmLanguage_t.read()
             behat_tmLanguage_t.close()
 
-            behat_tmLanguage_s = re.sub(r'\<dict\>\%ADDSTEPVALIDATION\%\<\/dict\>',output, behat_tmLanguage_s)
+            behat_tmLanguage_s = behat_tmLanguage_s.replace(r'<dict>%ADDSTEPVALIDATION%</dict>',output)
 
-            behat_tmLanguage = open(sublime.packages_path()+"/Behat/Syntaxes/Behat.tmLanguage", 'w')
+            behat_tmLanguage = open(sublime.packages_path()+"/Behat/Syntaxes/Behat.tmLanguage", 'wb')
             behat_tmLanguage.write(behat_tmLanguage_s.decode('ascii', 'ignore'))
             self.steps = self.save['steps'].values();
             self.saveObj()
